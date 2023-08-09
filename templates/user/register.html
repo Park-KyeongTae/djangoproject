@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block contents %}
+<div class="container px-4 px-lg-5">
+    <div class="row gx-4 gx-lg-5 justify-content-center">
+      <div class="col-md-10 col-lg-8 col-xl-7">
+<form action="" method="post">
+    {% include "errors.html"%}
+    {% csrf_token %}
+    {% for field in form  %}
+    {% comment %} form 안에 비밀번호 및 아이디가 자동으로 포함되어있기 떄문에 포문에 안써도 된다 {% endcomment %}
+        <div class="form-group mb-3">
+            <label for="{{field.id_for_label}}">{{field.label}}</label>
+            <input type="{{field.field.widget.input_type}}" class="form-control" name="{{field.name}}" id="{{field.id_for_label}}">
+        </div>
+    {% endfor %}
+    <div class="form-group text-center">
+        <button type="submit" class="btn btn-primary">회원가입</button>
+    </div>
+</form>
+</div>
+</div>
+</div>
+{% endblock contents %}
+{% comment %} {{form.as_p}} {% endcomment %}
