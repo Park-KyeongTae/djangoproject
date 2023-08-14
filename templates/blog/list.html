@@ -1,30 +1,70 @@
 {% extends 'base.html' %}
+{% load board_filter %}
+{% load static %}
 {% block contents %}
   <div class="container px-4 px-lg-5">
     <div class="row gx-4 gx-lg-5 justify-content-center">
       <div class="col-md-10 col-lg-8 col-xl-7">
-        {% for post in list%}
-          <!-- Post preview-->
-          <div class="post-preview">
-            <a href={% url 'blog:detail' post.id %}>
-              <h2 class="post-title">{{forloop.counter}}.
-                {{post.subject}}</h2>
-              <h3 class="post-subtitle">{{post.content}}</h3>
-            </a>
-            <p class="post-meta">
-              <a href="#!"></a>
-              {{post.created_at}}
-            </p>
-          </div>
-          <!-- Divider-->
-          <hr class="my-4"/>
-        {% endfor %}
+        {% if post_list%}
+          {% for post in post_list%}
+            <!-- Post preview-->
+            <div class="post-preview">
+              <a href={% url 'blog:detail' post.id %}>
+                <h2 class="post-title">{{post_list.paginator.count|sub:post_list.start_index|sub:forloop.counter0|add:1}}.
+                  {{post.subject}}</h2>
+                <h3 class="post-subtitle">{{post.content}}</h3>
+              </a>
+              <p class="post-meta">
+                <a href="#"></a>
+                {{post.created_at}}
+              </p>
+              <!-- 질문에 달린 댓글 표시 갯수-->
+              <p>댓글 
+                {{post.comment_set.count}}
+              </p>
+            </div>
+            <!-- Divider-->
+            <hr class="my-4"/>
+          {% endfor %}
+        {% else %}
+          <p class="post-meta">등록된 게시물이 없습니다</p>
+        {% endif %}
         <!-- Pager-->
         <div class="d-flex justify-content-end mb-4">
-          <a class="btn btn-primary text-uppercase" href="#!">Older Posts →</a>
+
+          <nav aria-label="">
+            <ul class="pagination">
+              {% if post_list.has_previous %}
+                <li class="page-item">
+                  <a class="page-link" href="{{post_list.previous_page_number}}">Previous</a>
+                </li>
+              {% endif %}
+              {% for page in post_list.paginator.page_range %}
+                {% if  page >= post_list.number|add:-5 and page <= post_list.number|add:5%}
+                  <li class="page-item {% if page == post_list.number %} active {% endif %}" aria-current="page">
+                    <a class="page-link" href="{{page}}">{{page}}</a>
+                  </li>
+                {% endif %}
+              {% endfor %}
+              {% if post_list.has_next %}
+                <li class="page-item">
+                  <a class="page-link" href="{{post_list.next_page_number}}">Next</a>
+                </li>
+              {% endif %}
+            </ul>
+          </nav>
+
         </div>
       </div>
     </div>
   </div>
+</div>
 
+<!-- 페이지 번호 클릭 시 이동할 폼-->
+<form action="" method="get" id="actionForm">
+  <input type="hidden" name="page" value="{{page}}" id="page">
+</form>
 {% endblock contents %}
+{% block script %}
+<script src="{% static 'js/list.js' %}"></script>
+{% endblock script %}

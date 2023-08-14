@@ -1,12 +1,13 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login
-from django.db import transaction
+from django.contrib.auth.forms import PasswordChangeForm
+from django.contrib.auth.views import PasswordChangeView
+from django.urls import reverse_lazy
 
 from .forms import UserForm
 
 
-@transaction.atomic
 def register(request):
     if request.method == "POST":
         form = UserForm(request.POST)
@@ -25,3 +26,14 @@ def register(request):
     else:
         form = UserForm()
     return render(request, "user/register.html", {"form": form})
+
+
+class CustomPasswordChangeView(PasswordChangeView):
+    """
+    PasswordChangeView 에서 정의한
+    template_name 은 registration/password_change_form.html 을 찾게 되어 있음
+    success_url 은 password_change_done 으로 이동함
+    """
+
+    template_name = "user/password_change.html"
+    success_url = reverse_lazy("user:login")

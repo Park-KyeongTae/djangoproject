@@ -19,4 +19,14 @@ urlpatterns = [
         name="logout",
     ),
     path("register/", views.register, name="register"),
+    # path(
+    #     "password_change/",
+    #     auth_views.PasswordChangeView.as_view(),
+    #     name="password_change",
+    # ),
+    path(
+        "password_change/",
+        views.CustomPasswordChangeView.as_view(),
+        name="password_change",
+    ),
 ]
