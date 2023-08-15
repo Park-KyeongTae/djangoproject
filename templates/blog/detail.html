@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 {% block contents %}
   <!-- Post Content-->
 <article class="mb-4">
@@ -30,7 +31,17 @@
         <input type="submit" value="수정" class="btn btn-success" >
         {% endif %}
        </form>
-       <a href="{% url 'blog:index' %}" class="btn btn-sm btn-primary">목록으로</a>
+       
+       <div class="d-flex justify-content-between mb-3">
+        <a href="{% url 'blog:index' %}" class="btn btn-sm btn-secondary">목록으로</a>
+        <!-- 로그인 사용자와 작성자가 동할 경우만 -->
+        {% if request.user == list.author%}
+        <div>
+          <a href="{% url 'blog:post_modify' list.id %}" class="btn btn-sm btn-primary">수정</a>
+          <a href="{% url 'blog:post_delete' list.id %}" class="delete btn btn-sm btn-danger">삭제</a>
+        </div>
+        {% endif %}
+      </div>
       </div>
     </div>
   </div>
@@ -41,24 +52,39 @@
       <h5 class="my-3 border-bottom pb-2">댓글</h5>
       <!-- views.py 의 is_valid() 통과 못할 때-->
       {% include 'errors.html' %}
-      {% for post in list.comment_set.all%}
+      {% for comment in list.comment_set.all%}
       <div>
-        <h5>{{post.author}}</h5>      
-        <p>{{post.content}}</p> <p>{{post.created_at}}</p>
+        <h5>{{comment.author}}</h5>      
+        <p>{{comment.content}}</p> {% if  comment.modified_at%} <p>수정된 : {{comment.modified_at}}</p> {% else %} <p>생성된 :{{comment.created_at}} </p>{% endif %}
+        <p> <!-- 로그인 사용자와 작성자가 동할 경우만 -->
+          {% if request.user == comment.author%}
+          <div>
+            <a href="{% url 'blog:comment_modify' comment.id %}" class="btn btn-sm btn-primary">수정</a>
+            <a href="{% url 'blog:comment_delete' comment.id %}" class="delete btn btn-sm btn-danger">삭제</a>
+          </div>
+          {% endif %}</p>
         <hr>
       </div>
       {% endfor %}
+      
       <form action="{% url 'blog:comment_create' list.id %}" method="post">
-        {% include 'errors.html' %}
+        {% include 'errors.html' %} 
         {% csrf_token %}
         <div class="form-group mb-3">
           <label for="content">내용</label>
           <textarea name="content" id="content" rows="10" class="form-control">{{form.content.value|default_if_none:''}}</textarea>
         </div>
-        <input type="submit" value="댓글 등록" class="btn btn-success" >
+        <div class="d-flex justify-content-between mb-3">
+          <input type="submit" value="댓글 등록" class=" btn btn-sm btn-success" >
+          
+        
        </form>
 </div>
 </div>
 </div>
 
 {% endblock contents %}
+{% block script %}
+<script src="{% static 'js/detail.js' %}"></script>
+{% endblock script %}
+

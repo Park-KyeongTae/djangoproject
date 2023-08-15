@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block contents %}
+<!-- Post Content-->
+<article class="mb-4">
+  <div class="container px-4 px-lg-5">
+    <div class="row gx-4 gx-lg-5 justify-content-center">
+      <div class="col-md-10 col-lg-8 col-xl-7">
+       {% comment %} 폼 작성 {% endcomment %}
+       <form method="post">
+        {% include 'errors.html' %}
+        {% csrf_token %}
+        {% comment %} {{samplepost_form.as_p}}   {% endcomment %}
+        <div class="form-group mb-3">
+          <label for="content">내용</label>
+          <textarea name="content" id="content" rows="10" class="form-control">{{form.content.value|default_if_none:''}}</textarea>
+        </div>
+        <input type="submit" value="댓글 수정" class="btn btn-success" >
+        
+       </form>
+      </div>
+    </div>
+  </div>
+</article>
+
+{% endblock contents %}
+    
