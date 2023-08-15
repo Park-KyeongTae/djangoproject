@@ -8,6 +8,7 @@ from django.urls import reverse_lazy
 from .forms import UserForm
 
 
+# 회원등록
 def register(request):
     if request.method == "POST":
         form = UserForm(request.POST)
@@ -28,6 +29,7 @@ def register(request):
     return render(request, "user/register.html", {"form": form})
 
 
+# 비밀번호 변경 구현
 class CustomPasswordChangeView(PasswordChangeView):
     """
     PasswordChangeView 에서 정의한
